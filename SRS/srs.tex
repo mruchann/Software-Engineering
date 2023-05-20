@@ -1,0 +1,1296 @@
+\documentclass[listof=nochaptergap]{report}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{blindtext}
+\usepackage{titlesec}
+
+\usepackage{apacite}
+\usepackage{graphicx}
+\usepackage{etoolbox}
+\usepackage[none]{hyphenat}
+\usepackage[margin=1in]{geometry}
+% now we need to fix \@chapter
+\makeatletter
+\patchcmd{\@chapter}
+  {\addtocontents{lof}{\protect\addvspace{10\p@}}}
+  {}
+  {}{}
+\patchcmd{\@chapter}
+  {\addtocontents{lot}{\protect\addvspace{10\p@}}}
+  {}
+  {}{}
+\makeatother
+
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{tocloft}
+\usepackage{indentfirst}
+\usepackage{chngcntr} % for resetting table numbering
+\usepackage{float}
+\usepackage[skip=0.5\baselineskip]{caption}
+
+\counterwithout{table}{chapter} % reset table numbering
+\counterwithout{figure}{chapter} % reset figure numbering
+
+
+\graphicspath{ {figures/} }
+\usepackage{array}
+
+
+\renewcommand{\arraystretch}{2}
+
+\renewcommand{\contentsname}{\hfill\bfseries\Huge Table of Contents\hfill}   
+\renewcommand{\cfttoctitlefont}{\hspace*{\fill}\Huge\bfseries}
+\renewcommand{\cftaftertoctitle}{\hspace*{\fill}}
+\renewcommand{\cftlottitlefont}{\hspace*{\fill}\Huge\bfseries}
+\renewcommand{\cftafterlottitle}{\hspace*{\fill}}
+\renewcommand{\cftloftitlefont}{\hspace*{\fill}\Huge\bfseries}
+\renewcommand{\cftafterloftitle}{\hspace*{\fill}}
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+\begin{document}
+\pagenumbering{none}
+
+\begin{center}
+    \includegraphics[scale=0.5]{figures/afetbilgi.png}
+
+    ~\\
+    ~\\
+
+\hrule
+~\\
+~\\
+    \Huge{\textbf{Software Requirements Specification}}
+~\\
+~\\
+\hrule
+    ~\\
+    ~\\
+    \href{https://afetbilgi.com}{afetbilgi.com}
+    ~\\
+    ~\\
+    \Large{Group 1}
+    ~\\
+    ~\\
+    \LARGE{Emirhan Oğul 2580777} \\ 
+    \LARGE{Mehmet Rüçhan Yavuzdemir 2522159} \\
+    ~\\
+    \Large{24.04.2023}
+\end{center}
+
+
+\newpage
+
+
+\pagenumbering{roman}
+\tableofcontents
+
+
+
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+
+
+\pagenumbering{arabic}
+
+\chapter{Introduction}
+\section{Purpose of The System}
+\par The purpose of this system is to provide reliable and validated information in the fight against the Pazarcık Earthquake on 6 February 2023, to both disaster victims and those who want to help. It aims to prevent the spread of misinformation thanks to its completely human-made database which is accurate, user-friendly, fast, and simple. 
+
+\section{Scope}
+
+The main scope of afetbilgi.com is that view reliable information split into various interfaces like topic selection interface, information list, Google Maps, and PDFs.
+
+\begin{itemize}
+    \item The system will maintain a human-made, reliable, and trusted database to persist information about the earthquake.
+    \item The system will have a map service where you can filter and see the places of temporary accommodation places, food distribution centers, active hospitals, container pharmacies, evacuation points, safe gathering places, veterinarians, and charity collection centers.
+    \item The system will have a PDF conversion service where you can select any city and get the appropriate information on natural disasters in that area.
+    \item The system will utilize Google Docs to keep the information in a easy to understand and structured manner.
+\end{itemize}
+\section{System Overview}
+    \subsection{System Perspective}
+
+    afetbilgi.com is not a large system itself. It is an intermediate layer between trusted sources and end users. However, it interacts with lots of systems and APIs such as Google Maps, Google Docs, AWS for backing data up, Cloudflare for CDN and caching, PDF Conversion service, and so on. The functionalities and use cases of those systems and APIs will be explained later in this document.
+    
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/First_Context_Diagram.jpg}
+                \caption{Context Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+            
+        \subsubsection{System Interfaces}
+            
+            \textbf{Google Maps API:} This API is used to search and filter useful locations such as accommodation, food distribution centers, active hospitals, veterinarians, gas stations, evacuation points, and emergency gathering places in Turkey's map. The users should consent to share their location with the API. \\
+
+            \textbf{PDF Conversion API:} This API is used to convert the selected address' information list into a PDF document which is easy to download and share. The created PDF will include all the information about the selected address. \\
+
+            
+            \textbf{Database Management Interface:} This interface is the building block of afetbilgi.com since all of the information stored in the database is human-made and verified by trusted authorities. It has components to keep track of up-to-date information. The information stored in the database is categorized. They have appropriate names, links, and details. \\
+
+            
+            \textbf{Google Docs API:} This API keeps track of the relevant details of the general needs, important resources, and health services, such as phone numbers, addresses, and organization names in a structured, reachable, and easy-to-understand way. \\
+
+            
+            \textbf{Cloudflare:} It provides content delivery networks for static data of the underlying services such as CDN, Google Maps API, and PDF Conversion Interface with the help of caching. \\
+
+            
+            \textbf{AWS:} This service provides an update and backup functionality for CDN and database. \\
+
+            \textbf{Back End Error Management Interface:} This interface is highly responsive in case of any system failure so that the downtime of the website is minimal, and the information loss is nearly guaranteed to be none. \\
+
+            
+        \subsubsection{User Interfaces}
+            People who want to reach the topic selection page, information page, map, PDF converter, and documents do not have to download any external application, it is highly accessible and can be used by only an Internet browser. It has a clean and button-oriented UI. More detailed information will be given in section (3.1). \\
+
+
+            \textbf{End User Topic Selection Interface} \\
+
+            
+            End users can see the topic selection interface without having to be registered to the website, and interact with the UI right away. End users can select any type of help using the user-friendly and simple UI. General needs, important resources, health, services, donation, contact page, relevant social media links, changing UI language, Google Maps, and PDF Conversion Service are all present in this interface.
+            \begin{center}
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/end-user-topic-selection.png}
+                    \caption{End User Topic Selection Interface}
+                    \label{fig:figure1}
+                \end{figure}
+            \end{center}
+
+            \newpage
+            
+            \textbf{Information List Interface} \\
+
+            Users can see the related information about the topic they selected and the address they provided. There are several types of list interfaces such as food providers list, health services list, veterinarians list, pharmacies list, transportation aid providers list, evacuation points list, and so on with the columns "Name", "Category", "Map location" and "Details".
+            
+            \begin{center}
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/information-list.png}
+                    \caption{Information List Interface}
+                    \label{fig:figure2}
+                \end{figure}
+            \end{center}
+
+            \newpage
+
+            \textbf{PDF Conversion Interface} \\
+
+            Users can convert the selected province's Information List Interface into a PDF document which is easy to download and share. The created PDF includes all the information such as Google Maps link, website links, addresses, and phone numbers of evacuation points, food distribution centers, gas stations, open pharmacies, safe gathering places, temporary accommodation places, and veterinarians in the selected city, with the last data validation date.
+            
+            \begin{center}
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{figures/pdf-selection-screen.png}
+                    \caption{PDF Creation Screen}
+                    \label{fig:figure4}
+                \end{figure}
+            \end{center}
+
+            \begin{center}
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/pdf-created-screen.png}
+                    \caption{Output PDF}
+                    \label{fig:figure5}
+                \end{figure}
+            \end{center}
+            
+            \textbf{Google Maps Interface} \\
+
+
+            afetbilgi.com provides a Google Maps Interface to its users. 
+            It provides functionalities like searching by name or filtering by categories. Users can search for useful locations such as temporary accommodation places, food distribution centers, active hospitals, container pharmacies, evacuation points, safe gathering places, veterinarians, and donation centers. The map itself is fully interactive and it supports zooming in and zooming out. Every useful location on the map has a source associated with it and there is an option to see the locations in the actual Google Maps application to get even further information. Users should consent to share their location with the API. 
+
+            \begin{center}
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/google-maps-interface.png}
+                    \caption{Google Maps Interface}
+                    \label{fig:figure3}
+                \end{figure}
+            \end{center}
+            
+            \newpage
+            
+            \textbf{Google Docs Interface} \\
+
+            afetbilgi.com provides data sheets in the form of Google Docs. All the data stored in these data sheets are verified by highly trusted sources and kept in a structured manner. Information stored in Google Docs has a couple of columns to indicate what service is being provided, where is it, which organization is providing it, and so on. It also includes a timestamp so the users can be guaranteed that the information is always up-to-date. Data sheets also include contact numbers, website links, and sources of information.
+            
+            \begin{center}
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/google-docs.png}
+                    \caption{Google Docs Interface}
+                    \label{fig:figure6}
+                \end{figure}
+            \end{center}
+        \subsubsection{Hardware Interfaces}
+        \begin{itemize}
+            \item Data centers should be highly available to serve CDN content. Although the website is updated frequently, due to the high amount of requests, caching mechanism shall be implemented.
+        \end{itemize}
+        \subsubsection{Software Interfaces}
+        \begin{itemize}
+            \item \textbf{Database}: afetbilgi.com uses a read-heavy database to store important information. The database should be secure and only store verified information. The database should be backed up on a daily basis.
+            \item \textbf{Operating System}: afetbilgi.com uses a Unix-based operating system Linux which is internally used by AWS on the back end side. However, on the front end side, all of the operating systems that have Internet browsers are supported.
+            \item \textbf{Google Maps}: It is used for displaying useful locations on Turkey's map.
+        \end{itemize}
+        \subsubsection {Communication Interfaces}
+        \begin{itemize}
+            \item The communication between clients and servers on the afetbilgi.com website is secured with HTTPS. Meanwhile, when transferring data between sources, TCP is used.
+        \end{itemize}
+        \subsubsection{Memory Constraints}
+        \begin{itemize}
+            \item The memory usage of the system shall be efficient, and GPU and RAM shall be enough to be able to interact with Google Maps. It shouldn't crash on low-end devices. Also, the system should have enough memory to handle database operations. Furthermore, cache capacity should be just enough to store CDN contents.
+        \end{itemize}
+        \subsubsection{Operations}
+        The operations provided by afetbilgi.com are:
+        ~\\
+        
+        \textbf{User operations:}
+        \begin{itemize}
+            \item View important phone numbers
+            \item View useful links
+            \item View useful articles
+            \item Contact with admins
+            \item Change UI language
+            \item Select general needs
+            \item Select health services
+            \item View map of useful locations
+            \item View source of the information
+            \item View details of the information
+            \item View contacts of the information
+            \item Convert information to PDF 
+        \end{itemize}
+
+        \textbf{Admin operations:}
+        \begin{itemize}
+            \item Add verified information
+            \item Remove outdated information
+        \end{itemize}
+        All details of these operations will be explained in the 3.2 Functions section.
+    \subsection{System Functions}
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{| p{5cm} | p{10cm} |}
+            \hline
+            \textbf{Function} & \textbf{Summary} \\
+            \hline
+            View important phone numbers & Users can see important numbers tagged with categories such as Tent Request, Whatsapp, AFAD, Health, Governmental Support Line, Association, and so on. Also includes detailed information about the phone numbers. \\
+            \hline
+            View useful links & Users can see important links tagged with categories such as Emergency Needs, Education, Animals, Employment, Accommodation, Mobile Toilets, Health, and other natural disaster awareness projects. \\
+            \hline
+            View useful articles & Users can see useful articles about post-earthquake, written by authorized people. Also includes links to the relevant websites. \\
+            \hline
+            Contact with admins & Users can contact admins via e-mail, Instagram, Twitter, and GitHub. \\
+            \hline
+            Change UI language & Users can change the UI language according to their choices. Users can choose between English, Turkish, Kurdish, and Arabic. \\
+            \hline
+            Select general needs & Users can find providers such as accommodation, transportation, gas stations, evacuation points, emergency gathering places, and so on according to their needs, in their province.  \\
+            \hline
+            Select health services & Users can see active hospitals, open pharmacies, container pharmacies, and veterinarians and see the relevant Google Doc. \\
+            \hline
+            Add verified information & Admins can add information verified by trusted authorities. \\
+            \hline
+            Remove outdated information & Admins can remove outdated information from the database and Google Docs. \\
+            \hline
+        \end{tabular}
+        \caption{System functions}
+        \label{tab:table1}
+    \end{table}
+    
+    \subsection{Stakeholder Characteristics}
+    There are 5 main stakeholders of afetbilgi.com, which are suppliers, admins, users, government, and developers.
+    \begin{itemize}
+        \item Suppliers are the companies or organizations that want to help people in various ways, such as temporary accommodation places, food distribution centers, gas stations, mobile toilets, and so on.
+        \item Admins are the people who organize and update the information that is present in the current human-made database.
+        \item Users can be divided into two categories:
+            \subitem \textbf{-} Users who try to help others, such as doctors, winch operators, veterinarians, and so on.
+            \subitem \textbf{-} Users who try to find help on the site, i.e, people who were affected by the earthquake.
+        \item Government organizations such as AFAD are making use of this website for finding missing people, reported by trusted sources.
+        \item Developers: Developers are highly active in GitHub, they give full support to the open source project on GitHub. In the early stages, they work almost full-time for the website.
+    \end{itemize}
+    \subsection{Limitations}
+    \begin{itemize}
+        \item \textbf{Regulatory Policies}: The system doesn't hold any critical personal information, such as credit card numbers, therefore
+        
+        \item \textbf{Hardware Limitations}: The system heavily relies on CDN's, so the Data Centers should always be up and running, there should be enough memory and disk space in the cloud computers.
+        
+        \item \textbf{Interfaces to other systems}: afetbilgi.com should be compatible with all the systems that it is interacting with, such as Google Maps API, PDF Conversion Service and Google Docs Interface. 
+        
+        \item \textbf{High-Level Language Requirements}: Due to rapid changes and feature needs, as well as supporting all of the devices, high-level languages like Python or JVM languages like Java should be used.
+        
+        \item \textbf{Parallel Operations}: Concurrency and multi-threading are problematic, the system should not assume that a device can do multiple tasks at a time, it should design the system such that they are no parallel operations because of the hardware limitations.
+        
+        \item \textbf{Quality Requirements}: Should be reliable and secure, the system shall have backup databases. Quality assurance tests must be conducted every week.
+        
+        \item \textbf{Criticality of application}: System failure could be life-threatening for someone, since the information that the site provides is extremely useful in certain life-threatening scenarios.
+     
+    \end{itemize}
+
+\newpage
+    
+\section{Definitions}
+    \begin{table}[ht]
+        \centering
+         \begin{tabular}{| c | c | c |} 
+         \hline
+         \textbf{Term} & \textbf{Definition} \\
+         \hline
+         API & Application Programming Interface \\
+         \hline
+         UI & User Interface \\
+         \hline
+         ID & A unique number to identify a database entry \\
+         \hline
+         CDN & Content Delivery Network \\
+         \hline
+         AWS & Amazon Web Services \\
+         \hline
+         HTTPS & Hypertext Transfer Protocol Secure \\
+         \hline
+         TCP & Transmission Control Protocol \\
+         \hline
+         PDF & Portable Document Format \\ 
+         \hline
+         JVM & Java Virtual Machine \\
+         \hline
+         DDOS & Distributed Denial Of Service \\
+         \hline
+         CAPTCHA & Completely Automated Public Turing test to tell Computers and Humans Apart \\
+         \hline
+         \end{tabular}
+        \caption{Definitions}
+        \label{tab:table2}
+    \end{table}
+\chapter{References}
+\textbf{This document is written with respect to the IEEE 29148-2018 standards:} \\
+
+
+29148-2018 - ISO/IEC/IEEE International Standard - Systems and software engineering – Life cycle processes – Requirements engineering \\
+
+
+\chapter{Specific Requirements}
+\section{External Interfaces}
+
+The following class diagram represents the relationship between interfaces and their functionalities. For an explanation of the interfaces, please refer to section (1.3.1.2).
+
+\begin{center}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/External-Interfaces.jpg}
+            \caption{External Interfaces Class Diagram}
+            \label{fig:figure1}
+        \end{figure}
+    \end{center}
+
+\section{Functions}
+    \begin{center}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/UseCaseDiagram.jpg}
+            \caption{Use Case Diagram}
+            \label{fig:figure1}
+        \end{figure}
+    \end{center}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View important phone numbers \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can see the important phone numbers by selecting the "Crucial Phone Numbers button", and they will be redirected to the communication application on their device. \\
+         \hline
+         \textbf{Data} & Category, Unit, Telephone, and Details \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "Crucial Phone Numbers button" under the important resources section on the home page of the website. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "Crucial Phone Number". \newline Step 2: User selects the phone number they want to call and get information about \newline Step 3: User is redirected to the communication application on their device.  \newline Step 4: User calls the relevant phone number. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the webpage will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User calls and gets information about relevant institution or service. \\
+         \hline
+         \end{tabular}
+        \caption{View important phone numbers}
+        \label{tab:table2}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View useful links \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can see the important links by selecting the "Useful Links" button, and they will be redirected to the relevant website. \\
+         \hline
+         \textbf{Data} & Web pages \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "Useful Links" button under the important resources section on the home page of the website. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "Useful Links". \newline Step 2: User selects the website link to get information about \newline Step 3: User is redirected to the website. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User is redirected to the relevant website. \\
+         \hline
+         \end{tabular}
+        \caption{View useful links}
+        \label{tab:table3}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View useful articles \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can see the important links by selecting the "Useful Articles" button, and they will be redirected to the relevant website. \\
+         \hline
+         \textbf{Data} & Article website \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "Useful Articles" button under the important resources section on the home page of the website. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "Useful Articles". \newline Step 2: User selects the website link to read the article. \newline Step 3: The user is redirected to the website. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User is redirected to the relevant website. \\
+         \hline
+         \end{tabular}
+        \caption{View useful articles}
+        \label{tab:table4}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Change UI language \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & User will be able to change the UI language based on their selection. \\
+         \hline
+         \textbf{Data} &  Human-made database.\\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on one of the language options on the drop-down menu. \\
+         \hline
+         \textbf{Basic flow} & Step 1: The user clicks on one of the options on the drop-down menu. \newline Step 2: The UI language changes according to their choice. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & Language has been changed to what the user has chosen from the drop-down menu. \\
+         \hline
+         \end{tabular}
+        \caption{Change UI Language}
+        \label{tab:table5}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Contact with admins \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users will get the relevant information about the ways to contact the admins. \\
+         \hline
+         \textbf{Data} & Human-made database. \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "About Us / Contact" button at the bottom of the home page. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the "About Us / Contact" button. \newline Step 2: About Us page will be opened and the user can now freely contact the admins. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & Users will get a chance to contact admins. \\
+         \hline
+         \end{tabular}
+        \caption{Contact with admins}
+        \label{tab:table6}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Select general needs \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can select general needs like emergency gathering areas, evacuation points, temporary accommodation places, food distribution centers, gas stations, mobile toilets, and so on. \\
+         \hline
+         \textbf{Data} & Human-made database. \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User can click on the buttons under the section of "General Needs" to see what they need. \\
+         \hline
+         \textbf{Basic flow} & Step 1: Users can select the general needs that they need. \newline Step 2: Users must select their address in order to see the general needs that they selected in their area. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & Users will get informed about the general needs that they selected. \\
+         \hline
+         \end{tabular}
+        \caption{Select general needs}
+        \label{tab:table7}
+    \end{table}
+
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Select General Needs Activity Diagram.jpg}
+                \caption{Select General Needs Activity Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Select health service \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users will be able to select the relevant health services, such as active hospitals, open pharmacies, container pharmacies and veterinarians. \\
+         \hline
+         \textbf{Data} & Human-made database. \\
+         \hline
+         \textbf{Preconditions} & User must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User selects a health service from the End User Topic Selection Interface. \\
+         \hline
+         \textbf{Basic flow} & Step 1: Users can select the health service that they need. \newline Step 2: Users must select their address in order to see the health services in their area. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & The user has chosen one of the health services and sees its details. \\
+         \hline
+         \end{tabular}
+        \caption{Select health service}
+        \label{tab:table8}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Add verified information \\
+         \hline
+         \textbf{Actors} & Admins \\
+         \hline
+         \textbf{Description} & Admins can add the information provided by the trusted sources to the database. \\
+         \hline
+         \textbf{Data} & Trusted sources \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & When a piece of new information is obtained from a trusted source, the admins should take the corresponding action. \\
+         \hline
+         \textbf{Basic flow} & Step 1: Information is obtained from a trusted source. \newline Step 2: The admins make a query to the database to add the mentioned information. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If an admin doesn't have database access, then this process cannot be completed and the admin must obtain the relevant access. \\
+         \hline
+         \textbf{Postconditions} & Verified information is added to the database. \\
+         \hline
+         \end{tabular}
+        \caption{Add verified information}
+        \label{tab:table9}
+    \end{table}
+
+        \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Remove outdated information \\
+         \hline
+         \textbf{Actors} & Admins, Trusted Source \\
+         \hline
+         \textbf{Description} & Admins can remove outdated information from the database when they are informed by trusted sources.  \\
+         \hline
+         \textbf{Data} & Trusted sources \\
+         \hline
+         \textbf{Preconditions} & Admins must have an Internet connection and the relevant database access. \\
+         \hline
+         \textbf{Stimulus} & When a piece of information is declared "outdated" by a trusted source, the admins should take the corresponding action.  \\
+         \hline
+         \textbf{Basic flow} & Step 1: Information is declared "outdated" by a trusted source. \newline Step 2: The admins make a query to the database to remove the mentioned information. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If an admin doesn't have database access, then this process cannot be completed and the admin must obtain the relevant access. \\
+         \hline
+         \textbf{Postconditions} & The outdated information will be vanished from the database. \\
+         \hline
+         \end{tabular}
+        \caption{Remove outdated information}
+        \label{tab:table11}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Select address \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users must provide their address information in order to see the relevant Information List Interface. \\
+         \hline
+         \textbf{Data} & City, county, and neighborhood information \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection and select their address details in the drop-down menu. \\
+         \hline
+         \textbf{Stimulus} & Users first select their city, and they are prompted to select their county, and after that, they are prompted to select their neighborhood. \\
+         \hline
+         \textbf{Basic flow} & Step 1: Users select their city. \newline Step 2: Users select their county. \newline Step 3: Users select their neighborhood. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & The user has chosen the city they want to get information about. \\
+         \hline
+         \end{tabular}
+        \caption{Select address}
+        \label{tab:table11}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View selected topic \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can see the detailed columns about the topic they have selected. \\
+         \hline
+         \textbf{Data} & Human-made database \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User selects his/her address to move on. \\
+         \hline
+         \textbf{Basic flow} & Step 1: The user can see the detailed information in the Information List Interface. \newline Step 2: The user can click on the relevant links to get further information. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & The user can see the topics. \\
+         \hline
+         \end{tabular}
+        \caption{View selected topic}
+        \label{tab:table12}
+    \end{table}
+
+        \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View map \\
+         \hline
+         \textbf{Actors} & Users, Google Maps API \\
+         \hline
+         \textbf{Description} & Users can see Turkey's map and find useful locations on it. Functionalities like searching by name and filtering by categories will be provided in the Google Maps Interface. \\
+         \hline
+         \textbf{Data} & Turkey Natural Disaster Map \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection and enough GPU power to render the map. In addition, location permission should be given. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the button labeled as "MAP". \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "MAP". \newline Step 2: The user has been brought to the Google Maps Interface. \newline Step 3: The user can now see the useful locations, and he/she can search locations by name or filter them by categories. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & The user can see the map, filter the location by topic, and zoom in and zoom out on the map. \\
+         \hline
+         \end{tabular}
+        \caption{View map}
+        \label{tab:table13}
+    \end{table}
+
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/ViewMapStateDiagram.jpg}
+                \caption{View Map State Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+
+        \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View source \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can click on the link provided in the "Source" column in the Information List Interface to guarantee that the information listed is indeed valid. \\
+         \hline
+         \textbf{Data} & Trusted sources \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the relevant source link to see the trusted source's website. \\
+         \hline
+         \textbf{Basic flow} & Step 1: Users will be able to see the relevant source links on the Information List Interface.
+         \newline Step 2: The user must click on the link to see the trusted source's website. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & The user will be taken to the trusted source website or the relevant Google Docs. \\
+         \hline
+         \end{tabular}
+        \caption{View source}
+        \label{tab:table14}
+    \end{table}
+
+        \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View details \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can click on the relevant columns, such as a trusted website or Google Docs links to get further information. \\
+         \hline
+         \textbf{Data} & All details in the human-made database about selected topic \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the relevant links to get further information. \\
+         \hline
+         \textbf{Basic flow} & Step 1: Users will be able to see the relevant details links on the Information List Interface.
+         \newline Step 2: The link must be clicked to further get informed about the selected topic. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User will receive detailed information about the selected topic. \\
+         \hline
+         \end{tabular}
+        \caption{View details}
+        \label{tab:table15}
+    \end{table}
+
+        \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & View contacts \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & Users can click on the relevant columns, such as telephone numbers or e-mail addresses to get in touch with the providers.  \\
+         \hline
+         \textbf{Data} & Telephone numbers, e-mail addresses, and location information \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the contact links to get further information. \\
+         \hline
+         \textbf{Basic flow} & Step 1: Users will be able to see the relevant contact information on the Information List Interface.
+         \newline Step 2: Users may click on the contact links to get further information. \\
+         \hline
+         \textbf{Alternative flow \#1} & Step 2: If a contact link has been clicked on the Information List Interface, then the user will be taken to the relevant trusted source. \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User will receive the desired contact information. \\
+         \hline
+         \end{tabular}
+        \caption{View contacts}
+        \label{tab:table16}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Convert to PDF \\
+         \hline
+         \textbf{Actors} & Users, PDF Conversion Service \\
+         \hline
+         \textbf{Description} & Users can initiate the PDF Conversion process by selecting the address they are currently at or they can query a PDF for all the cities, and then they can click on the "Download" button to download the desired PDF.  \\
+         \hline
+         \textbf{Data} & Phone numbers, addresses, sources, and the location on Google Maps \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection and enough disk storage in their device. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "PDF" button on the relevant topic selection page. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "PDF". \newline Step 2: User selects the city they want to get information about \newline Step 3: User clicks on the "Download" button to download the PDF. \newline Step 4: The user has now received a PDF. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User receives a PDF with all the relevant information that they have desired. \\
+         \hline
+         \end{tabular}
+        \caption{Convert to PDF}
+        \label{tab:table17}
+    \end{table}
+
+    \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Convert_to_PDF_Sequence_Dİagram.jpg}
+                \caption{Convert to PDF Sequence Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+    
+\section{Usability Requirements}
+\begin{itemize}
+    \item All the functions of the system shall be ready to use for the user when they have an Internet connection.
+    \item Users shall be able to reach any information on the site by at most 5 button clicks.
+    \item A dropdown menu shall be provided for user to change the UI language according to user's desires.
+    \item An intuitive interface for address selection shall be provided to users for them to get the most accurate information about the earthquake.
+    \item The system functionalities itself shall be self-explanatory, there shall not be any question marks in the head of the users.
+    \item All the interfaces in the system shall have user-friendly views, they shall include lively colors and large enough fonts for everyone to see.
+\end{itemize}
+
+\section{Performance Requirements}
+
+\begin{itemize}
+    \item Bandwidth shall be sufficient such that afetbilgi.com handles 1 million HTTP requests such as per hour. 
+    \item Users with an average Internet speed should download the PDFs within 10 seconds at most.
+    \item Database query latency should be less than 4 seconds.
+\end{itemize}
+
+\section{Logical Database Requirements}
+
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Logical-Database.jpg}
+                \caption{Logical Database Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+
+\section{Design Constraints}
+\begin{itemize}
+    \item The system shall be designed in accordance with the law of privacy.
+    \item All the information stored in the human database shall be categorized and kept private.
+    \item Any information stored shall comply with the regulatory policies.
+\end{itemize}
+
+
+\section{System Attributes}
+
+\subsection{Reliability}
+\begin{itemize}
+    \item If there is a sudden shutdown, the system should stand up within a couple of minutes.
+    \item There should not be any data loss in the database.
+\end{itemize}
+
+\subsection{Availability}
+\begin{itemize}
+    \item The downtime of the application shall be less than 0.0000001\% (six zeros) in a year.
+    \item The system backup process shall be done at a time when the application usage statistics are at their lowest.
+    \item If the system needs to be restarted or updated, then the system shall be available again in at most 5 minutes.
+\end{itemize}
+
+\subsection{Security}
+\begin{itemize}
+    \item Since afetbilgi.com doesn't store any personal information in their human-made database, in terms of data security and leakage prevention, there are no further measures to take.
+    \item However, like all websites, there is a risk of DDOS attacks. To prevent that, traffic filtering, rate limiting, and CAPTCHA should be implemented.
+\end{itemize}
+
+\subsection{Maintainability}
+\begin{itemize}
+    \item Documentation shall be updated regularly to ease the use of the system.
+    \item Integration of the new system shall not lead to the crash of the application.
+\end{itemize}
+
+\subsection{Portability}
+\begin{itemize}
+    \item The software application should be compatible with all Operating Systems. It shall run on MacOS, Windows, Linux, Android, iOS, and so on.
+    \item The choice of the programming language shall not be platform-dependent, a JVM language such as Java or Kotlin shall be used.
+    \item Any external libraries used in the system shall have up-to-date support and they shall work on all environments.
+\end{itemize}
+
+\section{Supporting Information}
+\begin{itemize}
+    \item Content blockers and adblockers may affect the user experience. To be on the safe side, the user might disable them since afetbilgi.com does not have any ads.
+\end{itemize}
+
+\chapter{Suggestions to improve the existing system}
+
+\begin{itemize}
+    \item \textbf{Chatbot}: It is better to provide a chatbot at the bottom right of the website so that users can easily navigate between what they need, rather than searching through and discovering all the buttons. An artificial intelligence API should be used, or a machine learning model should be trained.
+    
+    \item \textbf{Translation}: Since Turkey is a popular tourist attraction, German, Russian or French, Spanish, Italian, and other the most spoken languages should be added. Furthermore, since the translation is provided by static HTML files, there are some translation issues. A translation API can be used.
+
+    \item \textbf{News Feed}: This website lacks a user-friendly News Feed interface with the latest news from trusted sources. It can serve as a daily news digest. It's better for people to see the news in a more interactive way.
+
+    \item \textbf{Dark mode}: Dark mode is a trend these days because of its effect on battery life and eyes. It should be added and integrated into the website smoothly.
+
+    \item \textbf{WhatsApp support line}: Email support is great but if we consider the hurry and rush in the disaster area, WhatsApp would be faster, and it is much more common than email. In addition, we can learn if the message is delivered to the recipient. In Turkey, no one sends emails very frequently, but they send WhatsApp messages.
+
+    \item \textbf{Improve front-end components and widgets}: Although the website is fast because it has fewer UI components, the trade-off is not in the optimal case. It can be more cleaner and user-friendly. The buttons are clustered in such a way that sometimes users cannot find what they want at first look.
+    
+\end{itemize}
+
+\section{System Perspective}
+
+afetbilgi.com interacts with Google Maps, Google Docs, AWS, Cloudflare, PDF Conversion service, CDN, trusted sources, and more. In the improved version, in addition to the current version, afetbilgi.com interacts with Translation API for supporting more languages, with fewer bugs caused by static HTML files, and OpenAPI for a fully functional Chatbot that meets users' demands quickly and effectively. Furthermore, using trusted sources, the news feed represents the data in a more organized and user-friendly way. Users see the most breaking news on the home page of the website. The dark mode is added in and integrated with all the components of the website smoothly. Also, our system has a Whatsapp support line, which redirects users to the Whatsapp chat when they need something as well as want to report something. Although it does not solely improve the functionality of the system, the new system has better front-end and functional widgets.
+
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Improved_Context_Diagram.jpg}
+                \caption{Context Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+\section{External Interfaces}
+
+The following class diagram represents the relationship between new application programming interfaces and their new functionalities. \\
+
+\textbf{Translation API} \\
+
+
+Users can see all the Information List Interfaces, Google Maps Interfaces, Google Docs Interfaces, Topic Selection Interfaces and finally generated PDFs in their language thanks to the Translation API. It handles all the complex text and generates the response very quickly. However, in the old version, everything was not integrated into the translation, and they were several interfaces that does not have language support. Even if we select a specific language, they are a lot of text in Turkish, which is not convenient for foreign users. For example, maps.afetbilgi.com does not have any language support. Translation API solves this. \\
+
+\textbf{OpenAI API} \\
+
+
+The system needs some artificial assistance for users to make their life easier and help them find what they are looking for. OpenAI is known for its very complex and high-performance servers and models.  Therefore, there is no need to reinvent the wheel. We can trust and rely on this API. Searching all through the website and trying to find what they need is very cumbersome for especially the people in rural areas, elders, children, and so on. Chatbot powered by OpenAI solves this problem efficiently.
+
+\begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Improved-External-Interfaces.jpg}
+                \caption{External Interfaces} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+\section{Functions}
+
+\begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Improved-Use-Case-Diagram.jpg}
+                \caption{Use Case Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+\begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Chat with Chatbot \\
+         \hline
+         \textbf{Actors} & Users, OpenAI API \\
+         \hline
+         \textbf{Description} & Users can initiate a conversation with the Chatbot to navigate through the website efficiently or get information through to messaging box directly. Chatbot shall be capable of keeping up the conversation with the user as the new questions come in. \\
+         \hline
+         \textbf{Data} & User Input and Machine Learning Model  \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection and enough disk storage in their device. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "Chatbot" button at the bottom right of the page. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "Chatbot". \newline Step 2: User asks a question through the messaging box. \newline Step 3: User gets a detailed explanation of what they need. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User gets a response with the relevant information. \\
+         \hline
+         \end{tabular}
+        \caption{Chat with Chatbot}
+        \label{tab:table17}
+    \end{table}
+
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Chat with Chatbot.jpg}
+                \caption{Chat with Chatbot Sequence Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Change UI Theme \\
+         \hline
+         \textbf{Actors} & Users \\
+         \hline
+         \textbf{Description} & User will be able to change the UI theme based on their selection. \\
+         \hline
+         \textbf{Data} &  Color of the background.\\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on one of the color options on the drop-down menu. \\
+         \hline
+         \textbf{Basic flow} & Step 1: The user clicks on one of the options on the drop-down menu. \newline Step 2: The UI theme changes according to their choice. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & Theme has been changed to what the user has chosen from the drop-down menu. \\
+         \hline
+         \end{tabular}
+        \caption{Change UI Theme}
+        \label{tab:table5}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Contact admins via WhatsApp \\
+         \hline
+         \textbf{Actors} & Users, WhatsApp \\
+         \hline
+         \textbf{Description} & Users can contact admins via WhatsApp, which is much more common than email in Turkey. The admins should have a WhatsApp Support Line number.  \\
+         \hline
+         \textbf{Data} & WhatsApp link \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection and enough disk storage in their device. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "WhatsApp" icon, which redirects the user to the support line. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the "WhatsApp" icon. \newline Step 2: The user is redirected to the WhatsApp support line. \newline Step 3: User has a conversation with afetbilgi.com admins. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & User gets a chance to contact the admins via WhatsApp. \\
+         \hline
+         \end{tabular}
+        \caption{Contact admins via WhatsApp}
+        \label{tab:table17}
+    \end{table}
+
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Contact_Admins_via_WhatsApp_Activity_Diagram.jpg}
+                \caption{Contact Admins via WhatsApp Activity Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Set language \\
+         \hline
+         \textbf{Actors} & Users, Translation API \\
+         \hline
+         \textbf{Description} & Users can see the web page with more than 50 languages, with highly trained translation API. Before that, the HTML pages are kept as static files and actually, there is no live translation. There are some problems and a mixture of languages on a single page. From now on, the language support extended to more than 50 languages, which enables us tourists from a wide range of nationalities to use the website. \\
+         \hline
+         \textbf{Data} & Translation API Model \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection and enough disk storage in their device. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "Language" button on the relevant page. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "Language". \newline Step 2: User selects the desired language in the drop-down menu.  \newline Step 4: The site has now been translated to the selected language. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & The site has now been translated to any selected language. \\
+         \hline
+         \end{tabular}
+        \caption{Convert to PDF}
+        \label{tab:table17}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+         \begin{tabular}{| p{4cm} | p{10cm} |} 
+         \hline
+         \textbf{Use case name} & Display News Feed \\
+         \hline
+         \textbf{Actors} & Users, Trusted Sources \\
+         \hline
+         \textbf{Description} & Users can initiate the News Feed screen by selecting the topic that they want to get informed, and then they can see the user-friendly News Feed page with the relevant information.  \\
+         \hline
+         \textbf{Data} & Phone numbers, addresses, and sources \\
+         \hline
+         \textbf{Preconditions} & Users must have an Internet connection. \\
+         \hline
+         \textbf{Stimulus} & User clicks on the "News Feed" button on the relevant topic selection page. \\
+         \hline
+         \textbf{Basic flow} & Step 1: User clicks on the button labeled as "News Feed". \newline Step 2: User selects the topic they want to get information about \newline Step 3: Website generates a News Feed page with all the relevant information. \newline Step 4: Website displays a user-friendly News Feed to the user. \\
+         \hline
+         \textbf{Alternative flow \#1} & - \\
+         \hline
+         \textbf{Exception flow} & If the user has Internet connectivity problems or the system is currently facing an issue, then the web page will not be provided and they have to wait until the issues get solved. \\
+         \hline
+         \textbf{Postconditions} & Website displays a News Feed with all the relevant information that the user desires. \\
+         \hline
+         \end{tabular}
+        \caption{Display News Feed}
+        \label{tab:table17}
+    \end{table}
+
+        \begin{center}
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/Display_News_Feed_State_Diagram.jpg}
+                \caption{Display News Feed State Diagram} 
+                \label{fig:figure1}
+            \end{figure}
+        \end{center}
+
+\section{Usability Requirements}
+\begin{itemize}
+    \item Chatbot should be human-like, it should meet users' needs and give satisfactory answers.
+    \item Dark mode should be integrated pretty well, there should not be a mixture of dark and light modes.
+    \item All the functions of the system shall be ready to use for the user when they have an Internet connection.
+    \item Users shall be able to reach any information on the site by at most 5 button clicks.
+    \item A dropdown menu shall be provided for user to change the UI language according to user's desires.
+    \item An intuitive interface for address selection shall be provided to users for them to get the most accurate information about the earthquake.
+    \item The system functionalities itself shall be self-explanatory, there shall not be any question marks in the head of the users.
+    \item All the interfaces in the system shall have user-friendly views, they shall include lively colors and large enough fonts for everyone to see.
+\end{itemize}
+
+\section{Performance Requirements}
+\begin{itemize}
+    \item New UI components should be fast to load and highly responsive.
+    \item Our requests to the Translation and Artificial Intelligence APIs should be handled within 1 second.
+    \item Bandwidth shall be sufficient such that afetbilgi.com handles 1 million HTTP requests such as per hour. 
+    \item Users with an average Internet speed should download the PDFs within 10 seconds at most.
+    \item Database query latency should be less than 1 second.
+\end{itemize}
+
+\section{Logical Database Requirements}
+
+    \begin{center}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{figures/New_Logical_Database.jpg}
+            \caption{Logical Database Requirements} 
+            \label{fig:figure1}
+        \end{figure}
+    \end{center}
+
+
+\section{Design Constraints}
+\begin{itemize}
+    \item Since we have added a couple of dependencies like Translation and Artificial Intelligence API, our availability depends on their availability. We get rid of some responsibility but it has a cost.
+    \item The system shall be designed in accordance with the law of privacy.
+    \item All the information stored in the human database shall be categorized and kept private.
+    \item Any information stored shall comply with the regulatory policies.
+\end{itemize}
+
+\section{System Attributes}
+
+\subsection{Reliability}
+\begin{itemize}
+    \item If there is a sudden shutdown, the system should stand up within a couple of minutes.
+    \item There should not be any data loss in the database.
+\end{itemize}
+
+\subsection{Availability}
+\begin{itemize}
+    \item The downtime of the application shall be less than 0.0000001\% (six zeros) in a year.
+    \item The system backup process shall be done at a time when the application usage statistics are at their lowest.
+    \item If the system needs to be restarted or updated, then the system shall be available again in at most 5 minutes.
+\end{itemize}
+
+\subsection{Security}
+\begin{itemize}
+    \item Since afetbilgi.com doesn't store any personal information in their human-made database, in terms of data security and leakage prevention, there are no further measures to take.
+    \item However, like all websites, there is a risk of DDOS attacks. To prevent that, traffic filtering, rate limiting, and CAPTCHA should be implemented.
+\end{itemize}
+
+\subsection{Maintainability}
+\begin{itemize}
+    \item Documentation shall be updated regularly to ease the use of the system.
+    \item Integration of the new system shall not lead to the crash of the application.
+\end{itemize}
+
+\subsection{Portability}
+\begin{itemize}
+    \item The software application should be compatible with all Operating Systems. It shall run on MacOS, Windows, Linux, Android, iOS, and so on.
+    \item The choice of the programming language shall not be platform-dependent, a JVM language such as Java or Kotlin shall be used.
+    \item Any external libraries used in the system shall have up-to-date support and they shall work on all environments.
+\end{itemize}
+
+\section{Supporting Information}
+\begin{itemize}
+    \item For low-end devices, the dark mode may be unsupported.
+\end{itemize}
+
+\chapter{Appendices}
+\section{Assumptions and Dependencies}
+\section{Acronyms and Abbreviations}
+
+\end{document}
